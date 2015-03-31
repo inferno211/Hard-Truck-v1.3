@@ -1,0 +1,65 @@
+; dlltool --base-file D:\DOCUME~1\JRMY~1\LOCALS~1\Temp/cca02156.base --output-exp sampmysql.exp --dllname sampmysql.dll --output-def libsampmysql.def --add-stdcall-alias --exclude-symbol=DllMainCRTStartup@12 --def D:\DOCUME~1\JRMY~1\LOCALS~1\Temp/cca02156.def --output-lib libsampmysql.a
+EXPORTS
+	AmxLoad = AmxLoad@4 @ 1
+	AmxLoad@4 @ 2
+	AmxUnload = AmxUnload@4 @ 3
+	AmxUnload@4 @ 4
+	Load = Load@4 @ 5
+	Load@4 @ 6
+	SAMPMySQLNatives @ 7 DATA
+	Supports = Supports@0 @ 8
+	Supports@0 @ 9
+	Unload = Unload@0 @ 10
+	Unload@0 @ 11
+;	set_amxstring(tagAMX*, int, char*, int)
+	_Z13set_amxstringP6tagAMXiPci @ 12
+	amx_Align16 @ 13
+	amx_Align32 @ 14
+	amx_Allot @ 15
+	amx_Callback @ 16
+	amx_Cleanup @ 17
+	amx_Clone @ 18
+	amx_Exec @ 19
+	amx_FindNative @ 20
+	amx_FindPubVar @ 21
+	amx_FindPublic @ 22
+	amx_FindTagId @ 23
+	amx_Flags @ 24
+	amx_GetAddr @ 25
+	amx_GetNative @ 26
+	amx_GetPubVar @ 27
+	amx_GetPublic @ 28
+	amx_GetString @ 29
+	amx_GetTag @ 30
+	amx_GetUserData @ 31
+	amx_Init @ 32
+	amx_InitJIT @ 33
+	amx_MemInfo @ 34
+	amx_NameLength @ 35
+	amx_NativeInfo @ 36
+	amx_NumNatives @ 37
+	amx_NumPubVars @ 38
+	amx_NumPublics @ 39
+	amx_NumTags @ 40
+	amx_Push @ 41
+	amx_PushArray @ 42
+	amx_PushString @ 43
+	amx_RaiseError @ 44
+	amx_Register @ 45
+	amx_Release @ 46
+	amx_SetCallback @ 47
+	amx_SetDebugHook @ 48
+	amx_SetString @ 49
+	amx_SetUserData @ 50
+	amx_StrLen @ 51
+	amx_UTF8Check @ 52
+	amx_UTF8Get @ 53
+	amx_UTF8Len @ 54
+	amx_UTF8Put @ 55
+	assoc_row @ 56 DATA
+	connexion @ 57 DATA
+	logprintf @ 58 DATA
+	pAMXFunctions @ 59 DATA
+	ppPluginData @ 60 DATA
+	result @ 61 DATA
+	stringtosplit @ 62 DATA

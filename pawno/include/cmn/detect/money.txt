@@ -1,0 +1,58 @@
+			if(_activated[_money]) // cmn-money activated
+			{
+				if(GetPlayerMoney(playerid) > _player[playerid][_money]) // player has more money than he was given by the server
+				{
+					new difference = GetPlayerMoney(playerid) - _player[playerid][_money]; // extra money player had
+
+					if((IsPlayerInAnyVehicle(playerid)) && (difference > MAX_STUNT_BONUS)){} // makesure its not money gained by stunts
+					else if((_isplayerin(playerid)) && (GetPlayerInterior(playerid) == CASINO_INTERIOR_IDS)){}// makesure he is not in a casino
+					else
+					{
+						if(_player[playerid][_suspected]==1) // he is already suspected
+						{
+						    new file[30];
+						    new name[23];
+						    new string[256];
+							GetPlayerName(playerid,name,23);
+						    format(file,30,"%s%s.txt",BLOCKED_PATH,name);
+						    new File:hand = fopen(file,io_append);
+							format(string,256,"Case II: Money( $%d )\r\n",difference);
+							fwrite(hand,string);
+							fclose(hand);
+							_player[playerid][_suspected] = 2;
+							_player[playerid][_case2] = 1;
+							_block(name);
+
+						}
+						else // he is suspected for the first time
+						{
+						    new file[30];
+						    new name[23];
+						    new string[256];
+							GetPlayerName(playerid,name,23);
+						    format(file,30,"%s%s.txt",BLOCKED_PATH,name);
+							if(!fexist(file))fclose(fopen(file,io_write));
+							new File:hand = fopen(file,io_append);
+							format(string,256,"Name: %s\r\n",name);
+							fwrite(hand,string);
+							new ip[15];
+							GetPlayerIp(playerid,ip,15);
+							format(string,256,"Ip: %s\r\n",ip);
+							fwrite(hand,string);
+							new month,day,hour,minute,x;
+							getdate(x,month,day);
+							gettime(hour,minute,x);
+							format(string,256,"Date: %d:%d\r\n",month,day);
+							fwrite(hand,string);
+							format(string,256,"Time: %d:%d\r\n",hour,minute);
+							fwrite(hand,string);
+							format(string,256,"Case I: Money( $%d )\r\n",difference);
+							fwrite(hand,string);
+							fclose(hand);
+							_player[playerid][_suspected] = 1;
+							_player[playerid][_case1] = 1;
+						}
+					}
+					_log(playerid,1,difference);
+				}
+			}

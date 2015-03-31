@@ -1,0 +1,141 @@
+stock _log(playerid,reason,amount)
+{
+	if(!fexist(LOG_FILE_PATH))
+	{
+		new File:hand = fopen(LOG_FILE_PATH,io_write);
+		fwrite(hand," ca mo dt hr mn qn name\r\n");
+		fclose(hand);
+	}
+	new File:hand = fopen(LOG_FILE_PATH,io_append);
+	new string[256];
+	new name[23];
+	GetPlayerName(playerid,name,23);
+	new d,mo,h,m,x;
+	gettime(h,m,x);
+	getdate(x,mo,d);
+	format(string,256," %2d %2d %2d %2d %2d %2d %s\r\n",reason,mo,d,h,m,amount,name);
+	fwrite(hand,string);
+	fclose(hand);
+}
+
+forward _kick(playerid);
+public _kick(playerid)
+{
+	Kick(playerid);
+}
+
+forward _spawn(playerid);
+public _spawn(playerid)
+{
+	_player[playerid][_spawned] = 1;
+}
+stock _isplayerin(playerid)
+{
+	new Float:float1,Float:float2;
+	SetPlayerHealth(playerid,float1-1); // remove 1% of players health
+	GetPlayerHealth(playerid,float2); // get the health value now
+	if(float1-1 != float2) return 1;
+	return 0;
+}
+
+stock _block(name[])
+{
+	if(!fexist(BLACKLIST_PATH))fclose(fopen(BLACKLIST_PATH,io_write));
+	new string[25];
+	format(string,256,"%s\r\n",name);
+	new File:hand = fopen(BLACKLIST_PATH,io_append);
+	fwrite(hand,string);
+	fclose(hand);
+	new playerid = _getid(name);
+	SendClientMessage(playerid,0xFF6347AA," ");
+	SendClientMessage(playerid,0xFF6347AA," ** You are BLOCKED from the server, for the following cases.");
+	switch(_player[playerid][_case1])
+	{
+	    case 1:SendClientMessage(playerid,0xFF6347AA," ** Case I: Money Cheat.");
+	    case 2:SendClientMessage(playerid,0xFF6347AA," ** Case I: Health Cheat.");
+	    case 3:SendClientMessage(playerid,0xFF6347AA," ** Case I: Armour Cheat.");
+	    case 4:SendClientMessage(playerid,0xFF6347AA," ** Case I: Weapon Cheat.");
+	    case 5:SendClientMessage(playerid,0xFF6347AA," ** Case I: Ammo Cheat.");
+	    default:SendClientMessage(playerid,0xFF6347AA," ** Case I: UnKnown.");
+	}
+	switch(_player[playerid][_case2])
+	{
+	    case 1:SendClientMessage(playerid,0xFF6347AA," ** Case II: Money Cheat.");
+	    case 2:SendClientMessage(playerid,0xFF6347AA," ** Case II: Health Cheat.");
+	    case 3:SendClientMessage(playerid,0xFF6347AA," ** Case II: Armour Cheat.");
+	    case 4:SendClientMessage(playerid,0xFF6347AA," ** Case II: Weapon Cheat.");
+	    case 5:SendClientMessage(playerid,0xFF6347AA," ** Case II: Ammo Cheat.");
+	    default:SendClientMessage(playerid,0xFF6347AA," ** Case II: UnKnown.");
+	}
+	SendClientMessage(playerid,0xFF6347AA," ** If you want to APPEAL for your cases, feel free to leave a MESSAGE.");
+	SetTimerEx("_kick",60 * 1000,0,"i",playerid);
+}
+
+
+
+stock _getid(name[])
+{
+	for(new playerid = 0;playerid < MAX_PLAYERS;playerid++)
+	{
+	    new name2[23];
+	    GetPlayerName(playerid,name2,23);
+	    if(strcmp(name2,name,true)==0) return playerid;
+	}
+	return -1;
+}
+stock _unblock(name[])
+{
+	if(!fexist(BLACKLIST_PATH))fclose(fopen(BLACKLIST_PATH,io_write));
+	new string[25];
+	new File:hand1 = fopen(BLACKLIST_PATH,io_read);
+	new File:hand2 = fopen("tmp",io_write);
+	while(fread(hand1,string)) fwrite(hand2,string);
+	fclose(hand1);
+	fclose(hand2);
+	fremove(BLACKLIST_PATH);
+	hand1 = fopen(BLACKLIST_PATH,io_write);
+	hand2 = fopen("tmp",io_read);
+	while(fread(hand2,string)
+	{
+	    if(strcmp(string,name,true)) fwrite(hand1,string);
+	}
+	fclose(hand1);
+	fclose(hand2);
+}
+
+stock _isblocked(playerid)
+{
+	if(!fexist(BLACKLIST_PATH))fclose(fopen(BLACKLIST_PATH,io_write));
+	new File:hand = fopen(BLACKLIST_PATH,io_read);
+	new string[25];
+	new name[23];
+	GetPlayerName(playerid,name,23);
+	while(fread(hand,string)) if(strcmp(string,name,true)==0) return 1;
+	return 0;
+}
+
+stock _GivePlayerMoney(playerid,money)
+{
+	_player[playerid][_money]+=money;
+	return GivePlayerMoney(playerid,money);
+}
+
+stock _GivePlayerWeapon(playerid,weapon,ammo)
+{
+	new ret = GivePlayerWeapon(playerid,weapon,ammo);
+	for(new slot = 0;slot < 13;slot++)
+	{
+		new w,a;
+		GetPlayerWeaponData(playerid,slot,w,a);
+		_weapons[playerid][slot] = w;
+		_ammos[playerid][slot] = a;
+	}
+	return ret;
+}
+
+stock _TogglePlayerControllable(playerid,controllable)
+{
+	if(controllable)_player[playerid][_freezed] = 0;
+	else _player[playerid][_freezed] = 1;
+	return TogglePlayerControllable(playerid,controllable);
+}

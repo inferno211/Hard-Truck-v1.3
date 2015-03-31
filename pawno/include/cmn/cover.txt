@@ -1,0 +1,18 @@
+
+forward _OnGameModeInit();
+forward _OnPlayerText(playerid,text[]);
+forward _OnPlayerCommandText(playerid,cmdtext[]);
+forward _OnPlayerConnect(playerid);
+forward _OnRconCommand(cmd[]);
+forward _OnPlayerSpawn(playerid);
+
+#define GivePlayerMoney _GivePlayerMoney
+#define GivePlayerWeapon _GivePlayerWeapon
+#define TogglePlayerControllable _TogglePlayerControllable
+
+#define OnGameModeInit _OnGameModeInit
+#define OnPlayerText _OnPlayerText
+#define OnPlayerCommandText _OnPlayerCommandText
+#define OnPlayerConnect _OnPlayerConnect
+#define OnRconCommand _OnRconCommand
+#define OnPlayerSpawn _OnPlayerSpawn

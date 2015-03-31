@@ -1,0 +1,199 @@
+
+public OnPlayerText(playerid,text[])
+{
+	if(_player[playerid][_suspected]==2)
+	{
+		new file[30];
+		new name[23];
+		new string[256];
+		GetPlayerName(playerid,name,23);
+		format(file,30,"%s%s.txt",BLOCKED_PATH,name);
+		new File:hand = fopen(file,io_append);
+		format(string,256,"Feedback: %s\r\n",text);
+		fwrite(hand,string);
+		fclose(hand);
+		SendClientMessage(playerid,0xFF6347AA,string);
+		Kick(playerid);
+		return 0;
+	}
+	return CallLocalFunction("_OnPlayerText","is",playerid,text); 
+}
+
+public OnPlayerSpawn(playerid)
+{
+	SetTimerEx("_spawn",3000,0,"i",playerid);
+	return CallLocalFunction("_OnPlayerSpawn","i",playerid); 
+}
+
+public OnPlayerCommandText(playerid,cmdtext[])
+{
+	if(_player[playerid][_suspected]==2) return 1;
+	return CallLocalFunction("_OnPlayerCommandText","is",playerid,cmdtext); 
+}
+
+
+
+public OnGameModeInit()
+{
+	if(fexist(CONFIG_FILE_PATH))
+	{
+	    new File:hand = fopen(CONFIG_FILE_PATH,io_read);
+	    new string[50];
+	    while(fread(hand,string))
+	    {
+			if(strcmp("money",string,true,5)==0)
+			{
+				_activated[_money] = strval(string[6]);
+			}	
+			if(strcmp("health",string,true,6)==0)
+			{
+				_activated[_health] = strval(string[7]);
+			}	
+			if(strcmp("armour",string,true,6)==0)
+			{
+				_activated[_armour] = strval(string[7]);
+			}	
+			if(strcmp("weapon",string,true,6)==0)
+			{	
+				_activated[_weapon] = strval(string[7]);
+			}	
+			if(strcmp("ammo",string,true,4)==0)
+			{
+				_activated[_ammo] = strval(string[5]);
+			}	
+	    }
+	    fclose(hand);
+	}
+	SetTimer("_check",CHECK_INTERVAL * 1000,1); // call the '_check' function every 'INTERVAL' seconds
+	return CallLocalFunction("_OnGameModeInit","");
+}
+
+public OnPlayerConnect(playerid)
+{
+	_player[playerid][_spawned] = 0;
+	if(_isblocked(playerid)) return Kick(playerid);
+	return CallLocalFunction("_OnPlayerConnect","i",playerid);
+}
+
+public OnRconCommand(cmd[])
+{
+	if(cmd[0] == '(')
+	{
+		if(strcmp(cmd,"(status",true)==0)
+		{
+		    print(" Id - Name - Status ");
+		    printf(" 01 - Money - %d ",_activated[_money]);
+		    printf(" 02 - Health - %d ",_activated[_health]);
+		    printf(" 03 - Armour - %d ",_activated[_armour]);
+		    printf(" 04 - Weapon - %d ",_activated[_weapon]);
+		    printf(" 05 - Ammo - %d ",_activated[_ammo]);
+		    return 1;
+		}
+		if(strcmp("(activate",cmd,true,10)==0)
+		{
+			new id = strval(cmd[10]);
+			switch(id)
+			{
+			    case 0:
+			    {
+			        _activated[_money] = 1;
+			        _activated[_health] = 1;
+			        _activated[_armour] = 1;
+			        _activated[_weapon] = 1;
+			        _activated[_ammo] = 1;
+			        print("Activated !");
+			    }
+			    case 1:
+			    {
+			        _activated[_money] = 1;
+			        print("Activated !");
+			    }
+			    case 2:
+			    {
+			        _activated[_health] = 1;
+			        print("Activated !");
+			    }
+			    case 3:
+			    {
+			        _activated[_armour] = 1;
+			        print("Activated !");
+			    }
+			    case 4:
+			    {
+			        _activated[_weapon] = 1;
+			        print("Activated !");
+			    }
+			    case 5:
+			    {
+			        _activated[_ammo] = 1;
+			        print("Activated !");
+			    }
+			}
+			return 1;			
+		}
+		if(strcmp("(deactivate",cmd,true,12)==0)
+		{
+			new id = strval(cmd[12]);
+			switch(id)
+			{
+			    case 0:
+			    {
+			        _activated[_money] = 0;
+			        _activated[_health] = 0;
+			        _activated[_armour] = 0;
+			        _activated[_weapon] = 0;
+			        _activated[_ammo] = 0;
+			        print("Deactivated !");
+			    }
+			    case 1:
+			    {
+			        _activated[_money] = 0;
+			        print("Deactivated !");
+			    }
+			    case 2:
+			    {
+			        _activated[_health] = 0;
+			        print("Deactivated !");
+			    }
+			    case 3:
+			    {
+			        _activated[_armour] = 0;
+			        print("Deactivated !");
+			    }
+			    case 4:
+			    {
+			        _activated[_weapon] = 0;
+			        print("Deactivated !");
+			    }
+			    case 5:
+			    {
+			        _activated[_ammo] = 0;
+			        print("Deactivated !");
+			    }
+			}
+			return 1;
+		}
+		if(strcmp(cmd,"(block",true,6)==0)
+		{
+			_block(cmd[6]);
+			print("BLOCKED !");
+      		return 1;
+		}
+		
+		if(strcmp(cmd,"(unblock",true,8)==0)
+		{
+			_block(cmd[8]);
+			print("UNBLOCKED !");
+			return 1;
+		}
+		print("Command List:");
+        print(" ");
+        print("(status");
+        print("(activate <id>");
+        print("(deativate <id>");
+        print("(block <name>");
+        print("(unblock <name>");
+        return 1;
+	}
+	return CallLocalFunction("_OnRconCommand","s",cmd);
+}
